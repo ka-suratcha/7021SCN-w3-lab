@@ -1,6 +1,6 @@
 # app.py
 import sqlite3
-from flask import Flask, request, redirect, url_for, make_response, flash
+from flask import Flask, request, redirect, url_for, make_response, flash, render_template
 
 def get_db_connection():
     conn = sqlite3.connect('database.db')
@@ -24,50 +24,8 @@ def home():
     products = conn.execute('SELECT * FROM products').fetchall()
     conn.close()
 
-    html = f"""
-    <!DOCTYPE html>
-    <html><head>
-        <title>My Shop</title>
-        <link rel="stylesheet" href="{ url_for('static', filename='css/style.css') }">
-    </head>
-    <body>
-        <h1>Welcome to My Shop{', ' + current_user['username'] if current_user else ''}!</h1>
-        
-        <nav>
-            <a href="{ url_for('home') }">Home</a> | 
-            <a href="{ url_for('about') }">About</a>
-    """
-    
-    if current_user:
-        html += f" | <a href='{url_for('logout')}'>Logout</a>"
-        
-        if current_user['is_admin']:
-            html += f" | <a href='{url_for('admin_panel')}'>Admin Panel</a>"
-        
-        if current_user['is_seller'] or current_user['is_admin']:
-            html += f" | <a href='{url_for('add_product')}'>Add a Product</a>"
-        elif not current_user['is_seller'] and not current_user['is_admin']:
-            html += f" | <a href='{url_for('become_seller')}'>Become a Seller</a>"
-    else:
-        html += f"""
-             | <a href="{ url_for('login') }">Login</a>
-             | <a href="{ url_for('register') }">Register</a>
-        """
-
-    html += "</nav><hr><h2>Products</h2>"
-
-    for product in products:
-        html += f"""
-        <div>
-            <h2><a href="{url_for('product_page', product_id=product['id'])}">{product['name']}</a></h2>
-            <p><strong>Price:</strong> £{product['price']} | <strong>Seller:</strong> {product['seller_name']}</p>
-            <p>{product['description']}</p>
-        </div>
-        <hr>
-        """
-    
-    html += "</body></html>"
-    return html
+    # Jinja2 templates escape every {{ value }}, so user data cannot add HTML or scripts.
+    return render_template('home.html', current_user=current_user, products=products)
 
 @app.route('/about')
 def about():
@@ -296,26 +254,7 @@ def edit_product(product_id):
         flash("Product not found.")
         return redirect(url_for('home'))
 
-    html = f"""
-    <!DOCTYPE html><html><body>
-    <h1>Edit Product: {product['name']}</h1>
-    <form method="post">
-        <label for="name">Product Name</label>
-        <input type="text" name="name" id="name" value="{product['name']}" required>
-        <br>
-        <label for="price">Price</label>
-        <input type="number" step="0.01" name="price" id="price" value="{product['price']}" required>
-        <br>
-        <label for="description">Description</label>
-        <textarea name="description" id="description" required>{product['description']}</textarea>
-        <br>
-        <button type="submit">Save Changes</button>
-    </form>
-    <br>
-    <a href="{url_for('home')}">Cancel</a>
-    </body></html>
-    """
-    return html
+    return render_template('edit.html', product=product)
 
 @app.route('/delete/<int:product_id>')
 def delete_product(product_id):
@@ -378,45 +317,11 @@ def product_page(product_id):
         flash("Product not found.")
         return redirect(url_for('home'))
 
-    edit_delete_links = ""
-    if current_user:
-        if current_user['is_admin'] or (current_user['username'] == product['seller_name']):
-            edit_delete_links = f"""
-                <p>
-                    <a href="{url_for('edit_product', product_id=product['id'])}">Edit Product</a>
-                    | <a href="{url_for('delete_product', product_id=product['id'])}">Delete Product</a>
-                </p>
-            """
-
-    html = f"""
-    <!DOCTYPE html><html><body>
-    <h1>{product['name']}</h1>
-    <p><strong>Price:</strong> £{product['price']}</p>
-    <p><strong>Seller:</strong> {product['seller_name']}</p>
-    <p>{product['description']}</p>
-    
-    {edit_delete_links}
-    
-    <hr>
-    <h2>Reviews</h2>
-    """
-    if reviews:
-        for review in reviews:
-            html += f"<p><strong>{review['author_name']}:</strong> {review['comment']}</p>"
-    else:
-        html += "<p>No reviews yet.</p>"
-
-    if logged_in_user:
-        html += """
-        <h3>Leave a Review</h3>
-        <form method="post">
-            <textarea name="comment" required></textarea><br>
-            <button type="submit">Submit Review</button>
-        </form>
-        """
-        
-    html += "<br><a href='/'>Back to Home</a></body></html>"
-    return html
+    can_edit = bool(current_user) and (
+        current_user['is_admin'] or current_user['username'] == product['seller_name']
+    )
+    return render_template('product.html', product=product, reviews=reviews,
+                           can_edit=can_edit, logged_in_user=logged_in_user)
 
 @app.route('/admin')
 def admin_panel():
@@ -437,29 +342,7 @@ def admin_panel():
     products = conn.execute('SELECT id, name FROM products').fetchall()
     conn.close()
 
-    html = f"""
-    <!DOCTYPE html>
-    <html><head><title>Admin Panel</title></head>
-    <body>
-        <h1>Admin Panel - Welcome, {user['username']}</h1>
-        <h2>Users</h2>
-        <ul>
-    """
-    for u in users:
-        html += f"<li>{u['username']}</li>"
-    
-    html += "</ul><h2>All Products</h2><ul>"
-
-    for p in products:
-        html += f"""
-        <li>
-            {p['name']} 
-            <a href="{url_for('delete_product', product_id=p['id'])}">[Delete]</a>
-        </li>
-        """
-
-    html += "</ul><br><a href='/'>Back to Home</a></body></html>"
-    return html
+    return render_template('admin.html', user=user, users=users, products=products)
 
 if __name__ == '__main__':
     app.run(debug=True)

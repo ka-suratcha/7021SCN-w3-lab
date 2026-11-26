@@ -1,0 +1,30 @@
+<!DOCTYPE html><html><body>
+<h1>{{ product['name'] }}</h1>
+<p><strong>Price:</strong> £{{ product['price'] }}</p>
+<p><strong>Seller:</strong> {{ product['seller_name'] }}</p>
+<p>{{ product['description'] }}</p>
+
+{% if can_edit %}
+<p>
+    <a href="{{ url_for('edit_product', product_id=product['id']) }}">Edit Product</a>
+    | <a href="{{ url_for('delete_product', product_id=product['id']) }}">Delete Product</a>
+</p>
+{% endif %}
+
+<hr>
+<h2>Reviews</h2>
+{% for review in reviews %}
+<p><strong>{{ review['author_name'] }}:</strong> {{ review['comment'] }}</p>
+{% else %}
+<p>No reviews yet.</p>
+{% endfor %}
+
+{% if logged_in_user %}
+<h3>Leave a Review</h3>
+<form method="post">
+    <textarea name="comment" required></textarea><br>
+    <button type="submit">Submit Review</button>
+</form>
+{% endif %}
+
+<br><a href='/'>Back to Home</a></body></html>
