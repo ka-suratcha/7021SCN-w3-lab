@@ -1,0 +1,48 @@
+2026-11-19T14:28:37.6317621Z ##[group]Run returntocorp/semgrep-action@v1
+2026-11-19T14:28:37.6317967Z with:
+2026-11-19T14:28:37.6318175Z   config: p/owasp-top-ten
+2026-11-19T14:28:37.6318420Z ##[endgroup]
+2026-11-19T14:28:37.6410226Z ##[command]/usr/bin/docker run --name returntocorpsemgrepagentv1_bf13bb --label 304781 --workdir /github/workspace --rm -e "INPUT_CONFIG" -e "INPUT_PUBLISHTOKEN" -e "HOME" -e "GITHUB_JOB" -e "GITHUB_REF" -e "GITHUB_SHA" -e "GITHUB_REPOSITORY" -e "GITHUB_REPOSITORY_OWNER" -e "GITHUB_REPOSITORY_OWNER_ID" -e "GITHUB_RUN_ID" -e "GITHUB_RUN_NUMBER" -e "GITHUB_RETENTION_DAYS" -e "GITHUB_RUN_ATTEMPT" -e "GITHUB_ACTOR_ID" -e "GITHUB_ACTOR" -e "GITHUB_WORKFLOW" -e "GITHUB_HEAD_REF" -e "GITHUB_BASE_REF" -e "GITHUB_EVENT_NAME" -e "GITHUB_SERVER_URL" -e "GITHUB_API_URL" -e "GITHUB_GRAPHQL_URL" -e "GITHUB_REF_NAME" -e "GITHUB_REF_PROTECTED" -e "GITHUB_REF_TYPE" -e "GITHUB_WORKFLOW_REF" -e "GITHUB_WORKFLOW_SHA" -e "GITHUB_REPOSITORY_ID" -e "GITHUB_TRIGGERING_ACTOR" -e "GITHUB_WORKSPACE" -e "GITHUB_ACTION" -e "GITHUB_EVENT_PATH" -e "GITHUB_ACTION_REPOSITORY" -e "GITHUB_ACTION_REF" -e "GITHUB_PATH" -e "GITHUB_ENV" -e "GITHUB_STEP_SUMMARY" -e "GITHUB_STATE" -e "GITHUB_OUTPUT" -e "GITHUB_ARTIFACTS" -e "GITHUB_ARTIFACTS_LIST" -e "RUNNER_OS" -e "RUNNER_ARCH" -e "RUNNER_NAME" -e "RUNNER_ENVIRONMENT" -e "RUNNER_TOOL_CACHE" -e "RUNNER_TEMP" -e "RUNNER_WORKSPACE" -e "ACTIONS_RUNTIME_URL" -e "ACTIONS_RUNTIME_TOKEN" -e "ACTIONS_CACHE_URL" -e "ACTIONS_RESULTS_URL" -e "ACTIONS_CACHE_MODE" -e "ACTIONS_ORCHESTRATION_ID" -e GITHUB_ACTIONS=true -e CI=true -v "/var/run/docker.sock":"/var/run/docker.sock" -v "/home/runner/work/_temp":"/github/runner_temp" -v "/home/runner/work/_temp/_github_home":"/github/home" -v "/home/runner/work/_temp/_github_workflow":"/github/workflow" -v "/home/runner/work/_temp/_runner_file_commands":"/github/file_commands" -v "/home/runner/work/7021SCN-w3-lab/7021SCN-w3-lab":"/github/workspace" returntocorp/semgrep-agent:v1
+2026-11-19T14:28:39.0681996Z === Running: SEMGREP_RULES="p/owasp-top-ten" semgrep ci
+2026-11-19T14:28:39.8469362Z                   
+2026-11-19T14:28:39.8469980Z                   
+2026-11-19T14:28:39.8470461Z ┌────────────────┐
+2026-11-19T14:28:39.8471048Z │ Debugging Info │
+2026-11-19T14:28:39.8471405Z └────────────────┘
+2026-11-19T14:28:39.8473064Z                   
+2026-11-19T14:28:39.8473714Z   SCAN ENVIRONMENT
+2026-11-19T14:28:39.8495535Z   versions    - semgrep 1.36.0 on python 3.11.4                                
+2026-11-19T14:28:39.8496140Z   environment - running in environment github-actions, triggering event is push
+2026-11-19T14:28:40.1428502Z invalid rule severity value: MEDIUM
+2026-11-19T14:28:40.1429078Z Traceback (most recent call last):
+2026-11-19T14:28:40.1430033Z   File "/usr/local/lib/python3.11/site-packages/semgrep/commands/wrapper.py", line 35, in wrapper
+2026-11-19T14:28:40.1430881Z     func(*args, **kwargs)
+2026-11-19T14:28:40.1431510Z   File "/usr/local/lib/python3.11/site-packages/semgrep/commands/ci.py", line 372, in ci
+2026-11-19T14:28:40.1432224Z     ) = semgrep.semgrep_main.main(
+2026-11-19T14:28:40.1432657Z         ^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-11-19T14:28:40.1433296Z   File "/usr/local/lib/python3.11/site-packages/semgrep/semgrep_main.py", line 511, in main
+2026-11-19T14:28:40.1434084Z     experimental_rules, unexperimental_rules = partition(
+2026-11-19T14:28:40.1434623Z                                                ^^^^^^^^^^
+2026-11-19T14:28:40.1435320Z   File "/usr/local/lib/python3.11/site-packages/boltons/iterutils.py", line 699, in partition
+2026-11-19T14:28:40.1436033Z     bucketized = bucketize(src, key)
+2026-11-19T14:28:40.1436458Z                  ^^^^^^^^^^^^^^^^^^^
+2026-11-19T14:28:40.1437130Z   File "/usr/local/lib/python3.11/site-packages/boltons/iterutils.py", line 674, in bucketize
+2026-11-19T14:28:40.1437835Z     key_of_val = key_func(val)
+2026-11-19T14:28:40.1438206Z                  ^^^^^^^^^^^^^
+2026-11-19T14:28:40.1438856Z   File "/usr/local/lib/python3.11/site-packages/semgrep/semgrep_main.py", line 512, in <lambda>
+2026-11-19T14:28:40.1439892Z     filtered_rules, lambda rule: rule.severity == RuleSeverity.EXPERIMENT
+2026-11-19T14:28:40.1441036Z                                  ^^^^^^^^^^^^^
+2026-11-19T14:28:40.1441712Z   File "/usr/local/lib/python3.11/site-packages/semgrep/rule.py", line 165, in severity
+2026-11-19T14:28:40.1442522Z     return RuleSeverity(self._raw.get("severity", RuleSeverity.INFO))
+2026-11-19T14:28:40.1443131Z            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+2026-11-19T14:28:40.1443693Z   File "/usr/local/lib/python3.11/enum.py", line 711, in __call__
+2026-11-19T14:28:40.1444227Z     return cls.__new__(cls, value)
+2026-11-19T14:28:40.1444607Z            ^^^^^^^^^^^^^^^^^^^^^^^
+2026-11-19T14:28:40.1445077Z   File "/usr/local/lib/python3.11/enum.py", line 1136, in __new__
+2026-11-19T14:28:40.1445582Z     raise exc
+2026-11-19T14:28:40.1446001Z   File "/usr/local/lib/python3.11/enum.py", line 1113, in __new__
+2026-11-19T14:28:40.1446527Z     result = cls._missing_(value)
+2026-11-19T14:28:40.1446895Z              ^^^^^^^^^^^^^^^^^^^^
+2026-11-19T14:28:40.1447545Z   File "/usr/local/lib/python3.11/site-packages/semgrep/constants.py", line 61, in _missing_
+2026-11-19T14:28:40.1448365Z     raise ValueError(f"invalid rule severity value: {value}")
+2026-11-19T14:28:40.1448936Z ValueError: invalid rule severity value: MEDIUM
