@@ -1,4 +1,5 @@
 # app.py
+import os
 import sqlite3
 from flask import Flask, request, redirect, url_for, make_response, flash, render_template
 
@@ -345,5 +346,6 @@ def admin_panel():
     return render_template('admin.html', user=user, users=users, products=products)
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    # Debug mode only when FLASK_DEBUG=1 is set. It is off by default.
+    app.run(debug=os.environ.get('FLASK_DEBUG') == '1')
     
