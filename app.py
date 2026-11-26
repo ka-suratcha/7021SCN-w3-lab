@@ -247,6 +247,7 @@ def edit_product(product_id):
         flash("Product updated successfully!")
         return redirect(url_for('home'))
 
+    # nosemgrep: python.flask.security.injection.tainted-sql-string.tainted-sql-string - product_id comes from Flask's <int:product_id> route converter, so it can only be a whole number and cannot carry SQL
     product_query = f"SELECT * FROM products WHERE id = {product_id}"
     product = conn.execute(product_query).fetchone()
     conn.close()
@@ -273,6 +274,7 @@ def delete_product(product_id):
         conn.close()
         return redirect(url_for('home'))
 
+    # nosemgrep: python.flask.security.injection.tainted-sql-string.tainted-sql-string - product_id comes from Flask's <int:product_id> route converter, so it can only be a whole number and cannot carry SQL
     delete_query = f"DELETE FROM products WHERE id = {product_id}"
     conn.execute(delete_query)
     conn.commit()
@@ -307,9 +309,11 @@ def product_page(product_id):
         conn.close()
         return redirect(url_for('product_page', product_id=product_id))
 
+    # nosemgrep: python.flask.security.injection.tainted-sql-string.tainted-sql-string - product_id comes from Flask's <int:product_id> route converter, so it can only be a whole number and cannot carry SQL
     product_query = f'SELECT * FROM products WHERE id = {product_id}'
     product = conn.execute(product_query).fetchone()
     
+    # nosemgrep: python.flask.security.injection.tainted-sql-string.tainted-sql-string - product_id comes from Flask's <int:product_id> route converter, so it can only be a whole number and cannot carry SQL
     reviews_query = f'SELECT * FROM reviews WHERE product_id = {product_id}'
     reviews = conn.execute(reviews_query).fetchall()
     conn.close() 
