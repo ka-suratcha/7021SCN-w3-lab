@@ -18,8 +18,8 @@ def home():
     conn = get_db_connection()
     
     if logged_in_user:
-        query = f"SELECT * FROM users WHERE username = '{logged_in_user}'"
-        current_user = conn.execute(query).fetchone()
+        query = "SELECT * FROM users WHERE username = ?"
+        current_user = conn.execute(query, (logged_in_user,)).fetchone()
 
     products = conn.execute('SELECT * FROM products').fetchall()
     conn.close()
@@ -95,8 +95,8 @@ def register():
 
         conn = get_db_connection()
         try:
-            query = f"INSERT INTO users (username, password) VALUES ('{username}', '{password}')"
-            conn.execute(query)
+            query = "INSERT INTO users (username, password) VALUES (?, ?)"
+            conn.execute(query, (username, password))
             conn.commit()
         except conn.IntegrityError:
             flash("Username already exists. Please choose another.")
@@ -137,8 +137,8 @@ def login():
         password = request.form['password']
         
         conn = get_db_connection()
-        query = f"SELECT * FROM users WHERE username = '{username}' AND password = '{password}'"
-        user = conn.execute(query).fetchone()
+        query = "SELECT * FROM users WHERE username = ? AND password = ?"
+        user = conn.execute(query, (username, password)).fetchone()
         conn.close()
 
         if user:
@@ -189,8 +189,8 @@ def become_seller():
     conn = get_db_connection()
     
     if request.method == 'POST':
-        query = f"UPDATE users SET is_seller = 1 WHERE username = '{logged_in_user}'"
-        conn.execute(query)
+        query = "UPDATE users SET is_seller = 1 WHERE username = ?"
+        conn.execute(query, (logged_in_user,))
         conn.commit()
         conn.close()
         flash("Congratulations, you are now a seller!")
@@ -218,7 +218,7 @@ def add_product():
         return redirect(url_for('login'))
 
     conn = get_db_connection()
-    user = conn.execute(f"SELECT * FROM users WHERE username = '{logged_in_user}'").fetchone()
+    user = conn.execute("SELECT * FROM users WHERE username = ?", (logged_in_user,)).fetchone()
     
     if not (user['is_seller'] or user['is_admin']):
         flash("You must be a seller or admin to add products.")
@@ -230,8 +230,8 @@ def add_product():
         price = request.form['price']
         description = request.form['description']
 
-        query = f"INSERT INTO products (name, price, description, seller_name) VALUES ('{name}', '{price}', '{description}', '{logged_in_user}')"
-        conn.execute(query)
+        query = "INSERT INTO products (name, price, description, seller_name) VALUES (?, ?, ?, ?)"
+        conn.execute(query, (name, price, description, logged_in_user))
         conn.commit()
         conn.close()
         
@@ -267,8 +267,8 @@ def edit_product(product_id):
         return redirect(url_for('login'))
 
     conn = get_db_connection()
-    user_query = f"SELECT * FROM users WHERE username = '{logged_in_user}'"
-    user = conn.execute(user_query).fetchone()
+    user_query = "SELECT * FROM users WHERE username = ?"
+    user = conn.execute(user_query, (logged_in_user,)).fetchone()
     
     if not (user['is_seller'] or user['is_admin']):
         flash("You must be a seller or admin to manage products.")
@@ -280,8 +280,8 @@ def edit_product(product_id):
         price = request.form['price']
         description = request.form['description']
 
-        update_query = f"UPDATE products SET name = '{name}', price = '{price}', description = '{description}' WHERE id = {product_id}"
-        conn.execute(update_query)
+        update_query = "UPDATE products SET name = ?, price = ?, description = ? WHERE id = ?"
+        conn.execute(update_query, (name, price, description, product_id))
         conn.commit()
         conn.close()
         
@@ -325,8 +325,8 @@ def delete_product(product_id):
         return redirect(url_for('login'))
 
     conn = get_db_connection()
-    user_query = f"SELECT * FROM users WHERE username = '{logged_in_user}'"
-    user = conn.execute(user_query).fetchone()
+    user_query = "SELECT * FROM users WHERE username = ?"
+    user = conn.execute(user_query, (logged_in_user,)).fetchone()
     
     if not (user['is_seller'] or user['is_admin']):
         flash("You must be a seller or admin to manage products.")
@@ -349,8 +349,8 @@ def product_page(product_id):
     conn = get_db_connection()
     
     if logged_in_user:
-        user_query = f"SELECT * FROM users WHERE username = '{logged_in_user}'"
-        current_user = conn.execute(user_query).fetchone()
+        user_query = "SELECT * FROM users WHERE username = ?"
+        current_user = conn.execute(user_query, (logged_in_user,)).fetchone()
 
     if request.method == 'POST':
         if not current_user:
@@ -359,8 +359,8 @@ def product_page(product_id):
             return redirect(url_for('login'))
         
         comment = request.form['comment']
-        query = f"INSERT INTO reviews (product_id, author_name, comment) VALUES ({product_id}, '{logged_in_user}', '{comment}')"
-        conn.execute(query)
+        query = "INSERT INTO reviews (product_id, author_name, comment) VALUES (?, ?, ?)"
+        conn.execute(query, (product_id, logged_in_user, comment))
         conn.commit()
         flash("Your review has been submitted!")
         
@@ -426,7 +426,7 @@ def admin_panel():
         return redirect(url_for('login'))
     
     conn = get_db_connection()
-    user = conn.execute(f"SELECT * FROM users WHERE username = '{logged_in_user}'").fetchone()
+    user = conn.execute("SELECT * FROM users WHERE username = ?", (logged_in_user,)).fetchone()
     
     if not user or not user['is_admin']:
         flash("You are not authorised to view this page.")
